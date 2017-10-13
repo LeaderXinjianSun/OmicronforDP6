@@ -38,6 +38,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="halcondotnet">
+      <HintPath>C:\Program Files\MVTec\HALCON-10.0\bin\dotnet35\halcondotnet.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
@@ -60,8 +63,17 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="BarcodeRecord.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HcImageView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="HomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -70,6 +82,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="BarcodeRecord.xaml.cs">
+      <DependentUpon>BarcodeRecord.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="HcImageView.xaml.cs">
+      <DependentUpon>HcImageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
@@ -81,6 +99,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Parameter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ViewDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -89,6 +111,9 @@
   <ItemGroup>
     <Compile Include="MessagePrint.xaml.cs">
       <DependentUpon>MessagePrint.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Parameter.xaml.cs">
+      <DependentUpon>Parameter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -118,6 +143,14 @@
     <ProjectReference Include="..\BingLibrary\BingLibrary.csproj">
       <Project>{4af25010-f781-4a08-886f-7b40fe1c772f}</Project>
       <Name>BingLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OmriconforDP6.ViewModel\OmriconforDP6.ViewModel.csproj">
+      <Project>{f6aa2a16-b0af-41b2-adab-ce6dcbc9e4e1}</Project>
+      <Name>OmriconforDP6.ViewModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewROI\ViewROI.csproj">
+      <Project>{c4f5c5de-7ea8-47fe-8218-48138f48965f}</Project>
+      <Name>ViewROI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
