@@ -11,7 +11,38 @@
                    WindowStartupLocation="CenterScreen"
                      BorderThickness="0" GlowBrush="Black"  ResizeMode="CanResizeWithGrip" WindowTransitionsEnabled="True"
                      DataContext="{mvvm:Data md}">
+    <metro:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ViewDictionary.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </metro:MetroWindow.Resources>
     <Grid>
-        <local:HomePage></local:HomePage>    
+        <Grid.RowDefinitions>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition Height="92*"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Menu VerticalAlignment="Center">
+            <MenuItem Header="主页"></MenuItem>
+            <MenuItem Header="参数"></MenuItem>
+            <MenuItem Header="记录"></MenuItem>
+            <MenuItem Header="报警"></MenuItem>
+            <MenuItem Header="登录"></MenuItem>
+        </Menu>
+        <Grid Grid.Row="1">
+            <local:HomePage></local:HomePage>
+        </Grid>
+        <StatusBar Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock>PLC</TextBlock>
+            </StatusBarItem>
+            <StatusBarItem>
+                <StatusBarItem>
+                    <Ellipse Style="{StaticResource PLCConnectStatus}"></Ellipse>
+                </StatusBarItem>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </metro:MetroWindow>

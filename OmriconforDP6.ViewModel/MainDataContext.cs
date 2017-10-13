@@ -14,47 +14,64 @@ namespace OmriconforDP6.ViewModel
     [BingAutoNotify]
     public class MainDataContext : DataSource
     {
-        #region 属性
-        public virtual uint Text1 { get; set; } = 0;
+        #region 属性【绑定】
+        //public virtual uint Text1 { get; set; } = 0;
+        public virtual string MsgText { set; get; }
         #endregion
-        #region 方法
-        public void CountOprate(object p)
-        {
-            switch (p.ToString())
-            {
-                case "0":
-                    Timer.Start();
-                    break;
-                case "1":
-                    Timer.Stop();
-                    break;
-                case "2":
-                    Text1 = 0;
-                    break;
-                default:
-                    break;
-            }
-        }
+        #region 方法【绑定】
+        //public void CountOprate(object p)
+        //{
+        //    switch (p.ToString())
+        //    {
+        //        case "0":
+        //            Timer.Start();
+        //            break;
+        //        case "1":
+        //            Timer.Stop();
+        //            break;
+        //        case "2":
+        //            Text1 = 0;
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //}
         #endregion
         #region 变量
-        DispatcherTimer Timer;
+        //DispatcherTimer Timer;
+        private string MessageStr = "";
         #endregion
-        #region 私有方法
-        private void Timer_Tick(object sender, System.EventArgs e)
+        #region 其他方法
+        //private void Timer_Tick(object sender, System.EventArgs e)
+        //{
+        //    Text1++;
+        //    if (Text1 >= 65535)
+        //    {
+        //        Text1 = 0;
+        //    }
+        //}
+        /// <summary>
+        /// 打印窗口字符处理函数
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        private string AddMessage(string str)
         {
-            Text1++;
-            if (Text1 >= 65535)
+            string[] s = MessageStr.Split('\n');
+            if (s.Length > 1000)
             {
-                Text1 = 0;
+                MessageStr = "";
             }
+            MessageStr += "\n" + System.DateTime.Now.ToString() + " " + str;
+            return MessageStr;
         }
         #endregion
         #region 构造函数
         public MainDataContext()
         {
-            Timer = new DispatcherTimer();
-            Timer.Interval = new TimeSpan(100);
-            Timer.Tick += new EventHandler(Timer_Tick);
+            //Timer = new DispatcherTimer();
+            //Timer.Interval = new TimeSpan(100);
+            //Timer.Tick += new EventHandler(Timer_Tick);
         }
         #endregion
 

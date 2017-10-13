@@ -8,11 +8,20 @@
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <!--<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBox Width="200" Text="{Binding Text1}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
             <Button Content="Start" Command="{mvvm:ActionAutoWithParam CountOprate}" CommandParameter="0" Width="100" Margin="0,5,0,0" ></Button>
             <Button Content="Stop" Command="{mvvm:ActionAutoWithParam CountOprate}" CommandParameter="1" Width="100" Margin="0,5,0,0" ></Button>
             <Button Content="Reset" Command="{mvvm:ActionAutoWithParam CountOprate}" CommandParameter="2" Width="100" Margin="0,5,0,0" ></Button>
-        </StackPanel>
+        </StackPanel>-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2.5*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <local:MessagePrint Grid.Row="1"></local:MessagePrint>
     </Grid>
 </UserControl>
