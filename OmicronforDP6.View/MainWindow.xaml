@@ -28,7 +28,7 @@
             <MenuItem Header="主页" Command="{mvvm:ActionAutoWithParam ChoosePage}" CommandParameter="0"></MenuItem>
             <MenuItem Header="参数" IsEnabled="{Binding IsLoadin,FallbackValue=False}" Command="{mvvm:ActionAutoWithParam ChoosePage}" CommandParameter="1"></MenuItem>
             <MenuItem Header="记录" Command="{mvvm:ActionAutoWithParam ChoosePage}" CommandParameter="2"></MenuItem>
-            <MenuItem Header="报警" Command="{mvvm:ActionAutoWithParam ChoosePage}" CommandParameter="3"></MenuItem>
+            <!--<MenuItem Header="报警" Command="{mvvm:ActionAutoWithParam ChoosePage}" CommandParameter="3"></MenuItem>-->
             <MenuItem Header="登录" Command="{mvvm:ActionAutoWithParam ChoosePage}" CommandParameter="4"></MenuItem>
         </Menu>
         <Grid Grid.Row="1" Visibility="{Binding HomePageVisibility,FallbackValue= Visible}">

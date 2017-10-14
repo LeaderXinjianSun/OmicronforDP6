@@ -147,6 +147,7 @@ namespace BingLibrary.hjb
                     dt.Rows.Add(dr);
                 }
             }
+            reader.Close();
             return dt;
         }
 

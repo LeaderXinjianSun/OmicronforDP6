@@ -57,6 +57,8 @@ namespace OmriconforDP6.ViewModel
         public virtual string MainWindowVisibility { set; get; }
         public virtual bool IsLoadin { get; set; }
         public virtual ObservableCollection<DP6SQLROW> BarcodeRecord { set; get; } = new ObservableCollection<DP6SQLROW>();
+        public virtual int UpdateCount { set; get; }
+        public virtual string LastReUpdateStr { set; get; }
         #endregion
         #region 方法【绑定】
         /// <summary>
@@ -78,6 +80,7 @@ namespace OmriconforDP6.ViewModel
             if (str == "")
             {
                 System.Windows.Application.Current.Shutdown();
+                
             }
             else
             {
@@ -85,6 +88,8 @@ namespace OmriconforDP6.ViewModel
                 Inifile.INIWriteValue(iniParameterPath, "SQLMSG", "BLUID", str);
                 mydialog.changeaccent("Lime");
                 MainWindowVisibility = "Visible";
+                LoadBarCsvFromFile();
+                dispatcherTimer.Start();
             }
         }
         public void Selectfile(object p)
@@ -151,16 +156,14 @@ namespace OmriconforDP6.ViewModel
         {
             Async.RunFuncAsync(hcInspect, hcInspectCallback);
         }
+        public void ReUpdate()
+        {
+            ReUpLoad();
+        }
         public void FunctionTest()
         {
-            DP6SQLROW dP6SQLROW = new DP6SQLROW();
-            dP6SQLROW.BLDATE = DateTime.Now.ToString();
-            dP6SQLROW.BLID = BLID;
-            dP6SQLROW.BLMID = BLMID;
-            dP6SQLROW.BLNAME = BLNAME;
-            dP6SQLROW.BLUID = BLUID;
-            dP6SQLROW.Bar = "123";
-            WriteRecordtoExcel(dP6SQLROW, false);
+            string sss = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            DateTime dd = Convert.ToDateTime(sss);
         }
         #endregion
         #region 变量        
@@ -169,8 +172,11 @@ namespace OmriconforDP6.ViewModel
         string iniParameterPath = System.Environment.CurrentDirectory + "\\Parameter.ini";
         private HdevEngine hdevEngine;
         object PlcRW = new object();
+        object DisEq = new object();
         private dialog mydialog = new dialog();
         readonly AsyncLock m_lock = new AsyncLock();
+        DispatcherTimer dispatcherTimer = new DispatcherTimer();
+        Queue<DP6SQLROW> _BarcodeRecord = new Queue<DP6SQLROW>();
         #endregion
         #region 其他方法
         #region 参数读写
@@ -184,6 +190,7 @@ namespace OmriconforDP6.ViewModel
                 BLUID = Inifile.INIGetStringValue(iniParameterPath, "SQLMSG", "BLUID", "Null");
                 BLMID = Inifile.INIGetStringValue(iniParameterPath, "SQLMSG", "BLMID", "Null");
                 BLNAME = Inifile.INIGetStringValue(iniParameterPath, "SQLMSG", "BLNAME", "Null");
+                LastReUpdateStr = Inifile.INIGetStringValue(iniParameterPath, "ReUpLoad", "LastReUpdateStr", "2017-10-16 11:22:33");
                 MsgText = AddMessage("参数读取完成");
             }
             catch (Exception ex)
@@ -243,9 +250,10 @@ namespace OmriconforDP6.ViewModel
         {
             lock (PlcRW)
             {
+                //给PLC置位
                 aS300ModbusTCP.WriteSigleCoil("M5001", true);
             }
-            if (true)
+            if (true)//更具找到的条码，上传数据
             {
                 DP6SQLROW dP6SQLROW = new DP6SQLROW();
                 dP6SQLROW.BLDATE = DateTime.Now.ToString();
@@ -254,17 +262,24 @@ namespace OmriconforDP6.ViewModel
                 dP6SQLROW.BLNAME = BLNAME;
                 dP6SQLROW.BLUID = BLUID;
                 dP6SQLROW.Bar = "123";
+                bool r;
                 using (var releaser = await m_lock.LockAsync())
                 {
-                    bool r = await Update_A_Row(dP6SQLROW);
-                    if (r)
+                    r = await Update_A_Row(dP6SQLROW);
+                }
+                if (r)//更具是否上传成功，写入不同的记录文档
+                {
+                    lock (DisEq)
                     {
-                        //上传成功
+                        _BarcodeRecord.Enqueue(dP6SQLROW);
                     }
-                    else
-                    {
-                        //上传失败
-                    }
+                    WriteRecordtoExcel(dP6SQLROW, true);
+                    //上传成功
+                }
+                else
+                {
+                    WriteRecordtoExcel(dP6SQLROW, false);
+                    //上传失败
                 }
             }
         }
@@ -376,6 +391,123 @@ namespace OmriconforDP6.ViewModel
             }))();
         }
         #endregion
+        private void DispatcherTimerTickUpdateUi(Object sender, EventArgs e)
+        {
+            //每1s执行一次
+            if (_BarcodeRecord.Count > 0)
+            {
+                lock (DisEq)
+                {
+                    foreach (DP6SQLROW item in _BarcodeRecord)
+                    {
+                        BarcodeRecord.Add(item);
+                    }
+                    _BarcodeRecord.Clear();
+                }
+            }
+            TimeSpan ts = DateTime.Now - Convert.ToDateTime(LastReUpdateStr);
+            int hs = ts.Days * 24 + ts.Hours;
+            if (hs < 0 || hs > 4)
+            {
+                ReUpLoad();
+            }
+        }
+        private async void ReUpLoad()
+        {
+            DataTable dt = new DataTable();
+            DataTable dt1;
+            dt.Columns.Add("BLDATE", typeof(string));
+            dt.Columns.Add("BLID", typeof(string));
+            dt.Columns.Add("BLNAME", typeof(string));
+            dt.Columns.Add("BLUID", typeof(string));
+            dt.Columns.Add("BLMID", typeof(string));
+            dt.Columns.Add("Bar", typeof(string));
+            string filename = @"D:\NotUpdate.csv";
+            UpdateCount = 0;
+            if (File.Exists(filename))
+            {
+                dt1 = Csvfile.GetFromCsv(filename, 1, dt);
+                if (dt1.Rows.Count > 0)
+                {
+                    File.Delete(filename);
+                    foreach (DataRow item in dt1.Rows)
+                    {
+                        DP6SQLROW dP6SQLROW = new DP6SQLROW();
+                        dP6SQLROW.BLDATE = item[0].ToString();
+                        dP6SQLROW.BLID = item[1].ToString();
+                        dP6SQLROW.BLMID = item[4].ToString();
+                        dP6SQLROW.BLNAME = item[2].ToString();
+                        dP6SQLROW.BLUID = item[3].ToString();
+                        dP6SQLROW.Bar = item[5].ToString();
+                        bool r;
+                        using (var releaser = await m_lock.LockAsync())
+                        {
+                            r = await Update_A_Row(dP6SQLROW);
+                        }
+                        if (r)//更具是否上传成功，写入不同的记录文档
+                        {
+                            lock (DisEq)
+                            {
+                                _BarcodeRecord.Enqueue(dP6SQLROW);
+                            }
+                            WriteRecordtoExcel(dP6SQLROW, true);
+                            UpdateCount++;
+                            //上传成功
+                        }
+                        else
+                        {
+                            WriteRecordtoExcel(dP6SQLROW, false);
+                            //上传失败
+                        }
+                    }
+                    
+                }
+            }
+            LastReUpdateStr = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            Inifile.INIWriteValue(iniParameterPath, "ReUpLoad", "LastReUpdateStr", LastReUpdateStr);
+
+        }
+        private void LoadBarCsvFromFile()
+        {
+            DataTable dt = new DataTable();
+            DataTable dt1;
+            dt.Columns.Add("BLDATE", typeof(string));
+            dt.Columns.Add("BLID", typeof(string));
+            dt.Columns.Add("BLNAME", typeof(string));
+            dt.Columns.Add("BLUID", typeof(string));
+            dt.Columns.Add("BLMID", typeof(string));
+            dt.Columns.Add("Bar", typeof(string));
+            string bcstr = GetBanci();
+            string filename = @"D:\Record\" + bcstr + ".csv";
+            try
+            {
+                if (File.Exists(filename))
+                {
+                    dt1 = Csvfile.GetFromCsv(filename, 1, dt);
+                    if (dt1.Rows.Count > 0)
+                    {
+                        foreach (DataRow item in dt1.Rows)
+                        {
+                            DP6SQLROW dp6 = new DP6SQLROW();
+                            dp6.BLDATE = item[0].ToString();
+                            dp6.BLID = item[1].ToString();
+                            dp6.BLNAME = item[2].ToString();
+                            dp6.BLUID = item[3].ToString();
+                            dp6.BLMID = item[4].ToString();
+                            dp6.Bar = item[5].ToString();
+                            lock (DisEq)
+                            {
+                                _BarcodeRecord.Enqueue(dp6);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MsgText = AddMessage(ex.Message);
+            }
+        }
         private void LoadExcelFile()
         {
             if (!Directory.Exists(@"D:\Record"))
@@ -446,7 +578,10 @@ namespace OmriconforDP6.ViewModel
             aS300ModbusTCP = new AS300ModbusTCP(AS300IP);
             LoadExcelFile();
             hcInit();
-            Async.RunFuncAsync(PLCRun,null); 
+            Async.RunFuncAsync(PLCRun,null);
+            dispatcherTimer.Tick += new EventHandler(DispatcherTimerTickUpdateUi);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+            
         }
         #endregion
 
