@@ -67,7 +67,16 @@ namespace OmriconforDP6.ViewModel
         public void AppClosed()
         {
             WriteIni();
-            aS300ModbusTCP.CloseClass();
+            try
+            {
+                aS300ModbusTCP.CloseClass();
+            }
+            catch
+            {
+
+               
+            }
+            
         }
         /// <summary>
         /// 程序加载完
@@ -575,7 +584,16 @@ namespace OmriconforDP6.ViewModel
         public MainDataContext()
         {
             ReadIni();
-            aS300ModbusTCP = new AS300ModbusTCP(AS300IP);
+            try
+            {
+                aS300ModbusTCP = new AS300ModbusTCP(AS300IP);
+            }
+            catch (Exception ex)
+            {
+
+                MsgText = AddMessage(ex.Message);
+            }
+            
             LoadExcelFile();
             hcInit();
             Async.RunFuncAsync(PLCRun,null);
