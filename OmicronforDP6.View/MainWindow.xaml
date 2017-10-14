@@ -10,7 +10,7 @@
         Title="OmicronforDP6 2017101201" Height="768" Width="1024"
                    WindowStartupLocation="CenterScreen"
                      BorderThickness="0" GlowBrush="Black"  ResizeMode="CanResizeWithGrip" WindowTransitionsEnabled="True"
-                     DataContext="{mvvm:Data md}" Closing="MetroWindow_Closing" Closed="{mvvm:ActionAuto AppClosed}" Loaded="{mvvm:ActionAuto AppLoaded}">
+                     DataContext="{mvvm:Data md}">
     <metro:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -18,27 +18,21 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </metro:MetroWindow.Resources>
-    <Grid x:Name="MainGrid1" Visibility="{Binding MainWindowVisibility,FallbackValue=Visible}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition Height="92*"></RowDefinition>
             <RowDefinition Height="4*"></RowDefinition>
         </Grid.RowDefinitions>
         <Menu VerticalAlignment="Center">
-            <MenuItem Header="主页" Command="{mvvm:ActionAutoWithParam ChoosePage}" CommandParameter="0"></MenuItem>
-            <MenuItem Header="参数" IsEnabled="{Binding IsLoadin,FallbackValue=False}" Command="{mvvm:ActionAutoWithParam ChoosePage}" CommandParameter="1"></MenuItem>
-            <MenuItem Header="记录" Command="{mvvm:ActionAutoWithParam ChoosePage}" CommandParameter="2"></MenuItem>
-            <MenuItem Header="报警" Command="{mvvm:ActionAutoWithParam ChoosePage}" CommandParameter="3"></MenuItem>
-            <MenuItem Header="登录" Command="{mvvm:ActionAutoWithParam ChoosePage}" CommandParameter="4"></MenuItem>
+            <MenuItem Header="主页"></MenuItem>
+            <MenuItem Header="参数"></MenuItem>
+            <MenuItem Header="记录"></MenuItem>
+            <MenuItem Header="报警"></MenuItem>
+            <MenuItem Header="登录"></MenuItem>
         </Menu>
-        <Grid Grid.Row="1" Visibility="{Binding HomePageVisibility,FallbackValue= Visible}">
+        <Grid Grid.Row="1">
             <local:HomePage></local:HomePage>
-        </Grid>
-        <Grid Grid.Row="1" Visibility="{Binding ParameterVisibility,FallbackValue= Collapsed}">
-            <local:Parameter></local:Parameter>
-        </Grid>
-        <Grid Grid.Row="1" Visibility="{Binding BarcodeRecordVisibility,FallbackValue= Collapsed}">
-            <local:BarcodeRecord></local:BarcodeRecord>
         </Grid>
         <StatusBar Grid.Row="2">
             <StatusBarItem>
@@ -47,14 +41,6 @@
             <StatusBarItem>
                 <StatusBarItem>
                     <Ellipse Style="{StaticResource PLCConnectStatus}"></Ellipse>
-                </StatusBarItem>
-            </StatusBarItem>
-            <StatusBarItem>
-                <TextBlock>数据库</TextBlock>
-            </StatusBarItem>
-            <StatusBarItem>
-                <StatusBarItem>
-                    <Ellipse Style="{StaticResource DBConnectStatus}"></Ellipse>
                 </StatusBarItem>
             </StatusBarItem>
         </StatusBar>

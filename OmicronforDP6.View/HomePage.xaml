@@ -7,14 +7,13 @@
              xmlns:local="clr-namespace:OmicronforDP6.View"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ViewDictionary.xaml"></ResourceDictionary>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
     <Grid>
+        <!--<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBox Width="200" Text="{Binding Text1}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+            <Button Content="Start" Command="{mvvm:ActionAutoWithParam CountOprate}" CommandParameter="0" Width="100" Margin="0,5,0,0" ></Button>
+            <Button Content="Stop" Command="{mvvm:ActionAutoWithParam CountOprate}" CommandParameter="1" Width="100" Margin="0,5,0,0" ></Button>
+            <Button Content="Reset" Command="{mvvm:ActionAutoWithParam CountOprate}" CommandParameter="2" Width="100" Margin="0,5,0,0" ></Button>
+        </StackPanel>-->
         <Grid.RowDefinitions>
             <RowDefinition Height="2.5*"></RowDefinition>
             <RowDefinition></RowDefinition>
@@ -23,62 +22,6 @@
             <ColumnDefinition Width="2*"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <local:HcImageView Image="{Binding hImage}" HObjectList="{Binding hObjectList}" ActiveIndex="{Binding ActiveIndex, Mode=TwoWay}" Repaint="{Binding Repaint}" ROIChanged="{Binding ROIChanged,Mode=OneWayToSource}"  ROIList="{Binding ROIList}"></local:HcImageView>
         <local:MessagePrint Grid.Row="1"></local:MessagePrint>
-        <DataGrid Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding SinglDt}"></DataGrid>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-            </Grid.RowDefinitions>
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <TextBlock Text="治具编号" Style="{StaticResource TextBlockParameterMidName}"></TextBlock>
-                    <TextBlock Style="{StaticResource TextBlockBase}" Width="100" Text="{Binding BLID}"></TextBlock>
-
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <TextBlock Text="治具名称" Style="{StaticResource TextBlockParameterMidName}"></TextBlock>
-                    <TextBlock Style="{StaticResource TextBlockBase}" Width="180" Text="{Binding BLNAME}"></TextBlock>
-
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <TextBlock Text="折线人员" Style="{StaticResource TextBlockParameterMidName}"></TextBlock>
-                    <TextBlock Style="{StaticResource TextBlockBase}" Width="100" Text="{Binding BLUID}"></TextBlock>
-
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <TextBlock Text="机台编号" Style="{StaticResource TextBlockParameterMidName}"></TextBlock>
-                    <TextBlock Style="{StaticResource TextBlockBase}" Width="100" Text="{Binding BLMID}"></TextBlock>
-
-                </StackPanel>
-
-            </StackPanel>
-            <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <TextBlock Text="产量" Style="{StaticResource TextBlockParameterMidName}"></TextBlock>
-                    <TextBlock Style="{StaticResource TextBlockBase}" Width="100" Text="{Binding YieldCount}"></TextBlock>
-
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <TextBlock Text="报警数" Style="{StaticResource TextBlockParameterMidName}"></TextBlock>
-                    <TextBlock Style="{StaticResource TextBlockBase}" Width="180" Text="{Binding AlarmCount}"></TextBlock>
-
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <TextBlock Text="报警率" Style="{StaticResource TextBlockParameterMidName}"></TextBlock>
-                    <TextBlock Style="{StaticResource TextBlockBase}" Width="100" Text="{Binding AlmPer}"></TextBlock>
-                </StackPanel>
-
-            </StackPanel>
-            <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <Button Content="拍照" Command="{mvvm:ActionAuto TakePhoto}" Style="{StaticResource LoadinButton}"></Button>
-                    <Button Content="Test" Command="{mvvm:ActionAuto FunctionTest}"></Button>
-                </StackPanel>
-
-            </StackPanel>
-        </Grid>
     </Grid>
 </UserControl>

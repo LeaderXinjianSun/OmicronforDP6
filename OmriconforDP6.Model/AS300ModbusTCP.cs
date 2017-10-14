@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Net; // for the ip address
 using System.Runtime.InteropServices; // for the P/Invoke
 
-namespace Leader.DeltaAS300ModbusTCP
+namespace DeltaAS300ModbusTCPTest
 {
     enum FunctionCode
     {
@@ -142,16 +142,6 @@ namespace Leader.DeltaAS300ModbusTCP
         public AS300ModbusTCP()
         {
             IP = "192.168.1.5";
-            Init();
-
-        }
-        public AS300ModbusTCP(string _ip)
-        {
-            IP = _ip;
-            Init();
-        }
-        private void Init()
-        {
             string path = System.Environment.CurrentDirectory;
 
             path = path.Replace("\\", "\\\\");
@@ -159,13 +149,18 @@ namespace Leader.DeltaAS300ModbusTCP
 
             hDMTDll = LoadLibrary(path); // explicitly link to DMT.dll 
             CloseModbus = CloseSocket;
-            IPAddress ipaddress = IPAddress.Parse(IP);
-            ip = BitConverter.ToInt32(ipaddress.GetAddressBytes(), 0);
-            status = OpenModbusTCPSocket(conn_num, ip);
-            if (status == -1)
-            {
-                throw new Exception("Socket Connection Failed");
-            }
+
+        }
+        public AS300ModbusTCP(string ip)
+        {
+            IP = ip;
+            string path = System.Environment.CurrentDirectory;
+
+            path = path.Replace("\\", "\\\\");
+            path = path.Insert(path.Length, "DMT.dll"); // obtain the relative path where the DMT.dll resides
+
+            hDMTDll = LoadLibrary(path); // explicitly link to DMT.dll 
+            CloseModbus = CloseSocket;
         }
         public bool[] ReadCoils(string CoilName,int count)
         {
@@ -262,7 +257,13 @@ namespace Leader.DeltaAS300ModbusTCP
         {
             StringBuilder req = new StringBuilder(1024);
             StringBuilder res = new StringBuilder(1024);
-
+            IPAddress ipaddress = IPAddress.Parse(IP);
+            ip = BitConverter.ToInt32(ipaddress.GetAddressBytes(), 0);
+            status = OpenModbusTCPSocket(conn_num, ip);
+            if (status == -1)
+            {
+                throw new Exception("Socket Connection Failed");
+            }
 
             int addr = DevToAddrW(strProduct, strDev, dev_qty);
             if (addr == -1)
@@ -314,7 +315,6 @@ namespace Leader.DeltaAS300ModbusTCP
                 }
                 if (ret == -1)
                 {
-                    ResetSocketErr();
                     throw new Exception("Request Failed");
                 }
             }
@@ -322,7 +322,6 @@ namespace Leader.DeltaAS300ModbusTCP
         }
         public void CloseClass()
         {
-            CloseSocket(conn_num);
             FreeLibrary(hDMTDll);
         }
     }
